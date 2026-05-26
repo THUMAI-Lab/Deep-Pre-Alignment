@@ -1,0 +1,48 @@
+import argparse
+
+import tabulate
+
+from opencompass.utils import match_files
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Utils to list available models and datasets.')
+    parser.add_argument('pattern',
+                        nargs='*',
+                        default='*',
+                        type=str,
+                        help='Patterns, '
+                        'wildcard matching supported.')
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    models = match_files('opencompass/configs/models/',
+                         args.pattern,
+                         fuzzy=True)
+    if models:
+        table = [['Model', 'Config Path'], *models]
+        print(tabulate.tabulate(table, headers='firstrow', tablefmt='psql'))
+    datasets = match_files('opencompass/configs/datasets/',
+                           args.pattern,
+                           fuzzy=True)
+    if datasets:
+        table = [['Dataset', 'Config Path'], *datasets]
+        print(tabulate.tabulate(table, headers='firstrow', tablefmt='psql'))
+    mb_internal_models = match_files('opencompass/configs/mb_internal/models/',
+                                     args.pattern, fuzzy=True)
+    if mb_internal_models:
+        table = [['MB Internal Model', 'Config Path'], *mb_internal_models]
+        print(tabulate.tabulate(table, headers='firstrow', tablefmt='psql'))
+    mb_internal_datasets = match_files(
+        'opencompass/configs/mb_internal/datasets/',
+        args.pattern, fuzzy=True)
+    if mb_internal_datasets:
+        table = [['MB Internal Dataset', 'Config Path'], *mb_internal_datasets]
+        print(tabulate.tabulate(table, headers='firstrow', tablefmt='psql'))
+
+
+if __name__ == '__main__':
+    main()
